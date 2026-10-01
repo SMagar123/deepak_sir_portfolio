@@ -1,8 +1,9 @@
-import { Geist, Geist_Mono, Outfit } from "next/font/google"
+import { Geist_Mono, Outfit } from "next/font/google"
 
 import "./globals.css"
-import { ThemeProvider } from "@/components/theme-provider"
 import { cn } from "@/lib/utils"
+import SmoothScroll from "@/components/molecules/SmoothScroll"
+import { Navbar } from "@/components/molecules/Navbar"
 
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-sans" })
 
@@ -13,22 +14,21 @@ const fontMono = Geist_Mono({
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
       lang="en"
-      suppressHydrationWarning
       className={cn(
-        "antialiased",
-        fontMono.variable,
-        "font-sans",
-        outfit.variable
+        "font-sans antialiased",
+        outfit.variable,
+        fontMono.variable
       )}
     >
       <body>
-        <ThemeProvider>{children}</ThemeProvider>
+        <SmoothScroll>
+          <Navbar />
+          <main>{children}</main>
+        </SmoothScroll>
       </body>
     </html>
   )
