@@ -1,0 +1,131 @@
+"use client"
+
+import Image from "next/image"
+import Link from "next/link"
+import { ArrowUpRight } from "lucide-react"
+import { motion } from "motion/react"
+
+const easeOut = [0.22, 1, 0.36, 1] as const
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 24 },
+  show: (i: number = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, delay: i * 0.08, ease: easeOut },
+  }),
+}
+
+// ── Content data ──────────────────────────────────────────────
+const heroData = {
+  eyebrow: "Deepak Raj Bhusal",
+  headline: {
+    line1: "BUILDING IDEAS,",
+    line2Prefix: "CREATING ",
+    line2Highlight: "IMPACT.",
+  },
+  description:
+    "A passionate professional committed to leadership, innovation, and meaningful contributions to society. With a focus on creating opportunities and driving positive change, Deepak Raj Bhusal continues to turn ideas into purposeful action.",
+  cta: {
+    label: "Explore My Journey",
+    href: "/story",
+  },
+  image: {
+    src: "/images/person/hero.jpg",
+    alt: "Deepak Raj Bhusal",
+  },
+  caption: {
+    prefix: "Chairman of ",
+    highlight: "Enlighten Group",
+  },
+}
+
+// ── Component ─────────────────────────────────────────────────
+export function Hero() {
+  const { eyebrow, headline, description, cta, image, caption } = heroData
+
+  return (
+    <section className="relative container mx-auto w-full bg-background lg:px-4">
+      <div className="mx-auto grid grid-cols-1 items-center gap-10 py-16 md:grid-cols-2 md:gap-14 md:py-20 lg:gap-16 lg:px-0">
+        <div className="order-2 md:order-1">
+          <motion.p
+            variants={fadeUp}
+            initial="hidden"
+            animate="show"
+            custom={0}
+            className="text-base font-semibold tracking-wide text-chart-3 uppercase lg:text-2xl"
+          >
+            {eyebrow}
+          </motion.p>
+
+          <motion.h1
+            variants={fadeUp}
+            initial="hidden"
+            animate="show"
+            custom={1}
+            className="mt-4 text-4xl leading-[1.05] font-extrabold tracking-tight text-foreground lg:text-6xl xl:text-7xl"
+          >
+            {headline.line1}
+            <br />
+            {headline.line2Prefix}
+            <span className="text-destructive">{headline.line2Highlight}</span>
+          </motion.h1>
+
+          <motion.p
+            variants={fadeUp}
+            initial="hidden"
+            animate="show"
+            custom={2}
+            className="mt-6 max-w-2xl text-base leading-relaxed text-foreground lg:text-xl"
+          >
+            {description}
+          </motion.p>
+
+          <motion.div
+            variants={fadeUp}
+            initial="hidden"
+            animate="show"
+            custom={3}
+            className="mt-8"
+          >
+            <Link
+              href={cta.href}
+              className="group inline-flex items-center gap-2 rounded-xl bg-chart-3 px-5 py-2 text-base font-semibold text-primary-foreground md:text-xl lg:px-6 lg:py-4"
+            >
+              <span>{cta.label}</span>
+              <span className="inline-flex w-0 -translate-x-2 items-center justify-center overflow-hidden opacity-0 transition-all duration-300 ease-out group-hover:w-6 group-hover:translate-x-0 group-hover:opacity-100">
+                <ArrowUpRight className="size-6 shrink-0" />
+              </span>
+            </Link>
+          </motion.div>
+        </div>
+
+        {/* ── Right: Image card ── */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.7, ease: easeOut }}
+          className="order-1 md:order-2"
+        >
+          <div className="relative overflow-hidden rounded-3xl bg-muted shadow-xl ring-1 ring-border">
+            <div className="relative aspect-4/5 max-h-180 w-full sm:aspect-5/6">
+              <Image
+                src={image.src}
+                alt={image.alt}
+                fill
+                priority
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-cover"
+              />
+            </div>
+
+            <div className="bg-background px-5 py-4 text-center text-xl font-bold text-foreground sm:px-6 sm:py-5 lg:text-4xl">
+              {caption.prefix}
+              <span className="text-chart-3">{caption.highlight}</span>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  )
+}

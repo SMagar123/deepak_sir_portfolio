@@ -79,7 +79,7 @@ export function Navbar() {
         <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
           <Link
             href="/connect"
-            className="block h-9 rounded-lg bg-primary px-5 pt-1 text-center text-primary-foreground lg:pt-0.5 lg:text-xl"
+            className="block h-9 rounded-lg bg-chart-3 px-5 pt-1 text-center text-primary-foreground lg:pt-0.5 lg:text-xl"
           >
             Connect
           </Link>
