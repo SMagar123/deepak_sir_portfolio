@@ -12,11 +12,10 @@ const fadeUp = {
   show: (i: number = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.6, delay: i * 0.08, ease: easeOut },
+    transition: { duration: 1, delay: i * 0.08, ease: easeOut },
   }),
 }
 
-// ── Content data ──────────────────────────────────────────────
 const heroData = {
   eyebrow: "Deepak Raj Bhusal",
   headline: {
@@ -40,12 +39,14 @@ const heroData = {
   },
 }
 
-// ── Component ─────────────────────────────────────────────────
 export function Hero() {
   const { eyebrow, headline, description, cta, image, caption } = heroData
 
   return (
-    <section className="relative container mx-auto w-full bg-background lg:px-4">
+    <section
+      id="home"
+      className="relative container mx-auto w-full bg-background px-4"
+    >
       <div className="mx-auto grid grid-cols-1 items-center gap-10 py-16 md:grid-cols-2 md:gap-14 md:py-20 lg:gap-16 lg:px-0">
         <div className="order-2 md:order-1">
           <motion.p
@@ -100,14 +101,13 @@ export function Hero() {
           </motion.div>
         </div>
 
-        {/* ── Right: Image card ── */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.7, ease: easeOut }}
+          transition={{ duration: 1, ease: easeOut }}
           className="order-1 md:order-2"
         >
-          <div className="relative overflow-hidden rounded-3xl bg-muted shadow-xl ring-1 ring-border">
+          <div className="relative overflow-hidden rounded-xl bg-muted shadow-xl ring-1 ring-border">
             <div className="relative aspect-4/5 max-h-180 w-full sm:aspect-5/6">
               <Image
                 src={image.src}

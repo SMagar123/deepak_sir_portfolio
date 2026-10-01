@@ -1,10 +1,9 @@
 "use client"
 
 import * as React from "react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
 import { Menu } from "lucide-react"
 import { motion } from "motion/react"
+import { useLenis } from "lenis/react"
 
 import { cn } from "@/lib/utils"
 
@@ -22,20 +21,62 @@ import {
 } from "@/components/ui/sheet"
 
 const navLinks = [
-  { label: "Home", href: "/" },
-  { label: "Story", href: "/story" },
-  { label: "Ventures", href: "/ventures" },
-  { label: "Impact", href: "/impact" },
-  { label: "Insights", href: "/insights" },
-  { label: "Media", href: "/media" },
+  { label: "Home", id: "home" },
+  { label: "Story", id: "story" },
+  { label: "Ventures", id: "ventures" },
+  { label: "Impact", id: "impact" },
+  { label: "Insights", id: "insights" },
+  { label: "Media", id: "media" },
 ]
 
 export function Navbar() {
   const [open, setOpen] = React.useState(false)
-  const pathname = usePathname()
+  const [activeId, setActiveId] = React.useState("home")
+  const lenis = useLenis()
 
-  const isActive = (href) =>
-    href === "/" ? pathname === "/" : pathname.startsWith(href)
+  // ── Smooth scroll to a section ──────────────────────────────
+  const scrollToSection = (id) => {
+    const el = document.getElementById(id)
+    if (!el) return
+
+    // Prefer Lenis's scrollTo for buttery motion; fall back to native
+    if (lenis) {
+      lenis.scrollTo(el, { offset: -80, duration: 1.2 })
+    } else {
+      el.scrollIntoView({ behavior: "smooth", block: "start" })
+    }
+  }
+
+  // ── Track the active section on scroll ──────────────────────
+  React.useEffect(() => {
+    const sections = navLinks
+      .map((l) => document.getElementById(l.id))
+      .filter(Boolean)
+
+    if (!sections.length) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        // Pick the entry closest to the top of the viewport
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)
+
+        if (visible[0]) {
+          setActiveId(visible[0].target.id)
+        }
+      },
+      {
+        rootMargin: "-45% 0px -45% 0px", // triggers when section crosses middle of viewport
+        threshold: 0,
+      }
+    )
+
+    sections.forEach((s) => observer.observe(s))
+    return () => observer.disconnect()
+  }, [])
+
+  const isActive = (id) => activeId === id
 
   return (
     <motion.header
@@ -44,6 +85,7 @@ export function Navbar() {
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       className="sticky top-4 z-50 flex w-full justify-center px-4"
     >
+      {/* ── Desktop ── */}
       <nav
         className={cn(
           "hidden items-center gap-1 rounded-xl border border-chart-5 md:flex",
@@ -53,21 +95,21 @@ export function Navbar() {
         <NavigationMenu>
           <NavigationMenuList className="gap-1">
             {navLinks.map((link) => {
-              const active = isActive(link.href)
+              const active = isActive(link.id)
               return (
-                <NavigationMenuItem key={link.label}>
-                  <Link
-                    href={link.href}
+                <NavigationMenuItem key={link.id}>
+                  <button
+                    type="button"
+                    onClick={() => scrollToSection(link.id)}
                     className={cn(
-                      "block rounded-full px-4 py-2 text-sm font-medium transition-colors lg:text-xl",
-
+                      "block cursor-pointer rounded-full px-4 py-2 text-sm font-medium transition-colors lg:text-xl",
                       active
                         ? "text-primary"
                         : "text-foreground/80 hover:bg-muted"
                     )}
                   >
                     {link.label}
-                  </Link>
+                  </button>
                 </NavigationMenuItem>
               )
             })}
@@ -77,16 +119,17 @@ export function Navbar() {
         <span className="mx-1 h-5 w-px bg-border" aria-hidden />
 
         <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-          <Link
-            href="/connect"
-            className="block h-9 rounded-lg bg-chart-3 px-5 pt-1 text-center text-primary-foreground lg:pt-0.5 lg:text-xl"
+          <button
+            type="button"
+            onClick={() => scrollToSection("connect")}
+            className="block h-9 cursor-pointer rounded-lg bg-chart-3 px-5 pt-1 text-center text-primary-foreground lg:pt-0 lg:text-xl"
           >
             Connect
-          </Link>
+          </button>
         </motion.div>
       </nav>
 
-    
+      {/* ── Mobile ── */}
       <nav
         className={cn(
           "flex w-full max-w-md items-center justify-between md:hidden",
@@ -94,12 +137,16 @@ export function Navbar() {
           "px-4 py-2 shadow-sm"
         )}
       >
-        <Link href="/" className="text-sm font-semibold text-foreground">
+        <button
+          type="button"
+          onClick={() => scrollToSection("home")}
+          className="cursor-pointer text-sm font-semibold text-foreground"
+        >
           Portfolio
-        </Link>
+        </button>
 
         <Sheet open={open} onOpenChange={setOpen}>
-          <SheetTrigger >
+          <SheetTrigger>
             <motion.div
               whileTap={{ scale: 0.9 }}
               aria-label="Open menu"
@@ -116,10 +163,10 @@ export function Navbar() {
 
             <div className="mt-6 flex flex-col gap-1 px-4">
               {navLinks.map((link, i) => {
-                const active = isActive(link.href)
+                const active = isActive(link.id)
                 return (
                   <motion.div
-                    key={link.label}
+                    key={link.id}
                     initial={{ opacity: 0, x: 24 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{
@@ -128,17 +175,21 @@ export function Navbar() {
                       ease: [0.22, 1, 0.36, 1],
                     }}
                   >
-                    <Link
-                      href={link.href}
-                      onClick={() => setOpen(false)}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setOpen(false)
+                        // Small delay so the sheet closes before scrolling
+                        setTimeout(() => scrollToSection(link.id), 250)
+                      }}
                       className={cn(
-                        "block rounded-lg px-4 py-3 text-base font-medium transition-colors",
+                        "block w-full cursor-pointer rounded-lg px-4 py-3 text-left text-base font-medium transition-colors",
                         "hover:bg-muted",
                         active ? "text-primary" : "text-foreground/80"
                       )}
                     >
                       {link.label}
-                    </Link>
+                    </button>
                   </motion.div>
                 )
               })}
@@ -148,13 +199,16 @@ export function Navbar() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.35 }}
               >
-                <Link
-                  href="/connect"
-                  className="block h-11 rounded-xl bg-primary px-4 pt-2 text-center text-base text-primary-foreground"
-                  onClick={() => setOpen(false)}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setOpen(false)
+                    setTimeout(() => scrollToSection("connect"), 250)
+                  }}
+                  className="block h-11 w-full cursor-pointer rounded-xl bg-chart-3 px-4 text-center text-base text-primary-foreground"
                 >
                   Connect
-                </Link>
+                </button>
               </motion.div>
             </div>
           </SheetContent>
