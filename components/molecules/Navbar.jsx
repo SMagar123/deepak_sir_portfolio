@@ -99,14 +99,14 @@ export function Navbar() {
         </Link>
 
         <Sheet open={open} onOpenChange={setOpen}>
-          <SheetTrigger asChild>
-            <motion.button
+          <SheetTrigger >
+            <motion.div
               whileTap={{ scale: 0.9 }}
               aria-label="Open menu"
               className="outline-none"
             >
               <Menu className="size-5 text-chart-3" />
-            </motion.button>
+            </motion.div>
           </SheetTrigger>
 
           <SheetContent side="right" className="w-75 bg-background sm:w-90">
