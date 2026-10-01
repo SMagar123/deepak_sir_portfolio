@@ -7,11 +7,9 @@ import { ArrowUpRight } from "lucide-react"
 import { motion, AnimatePresence } from "motion/react"
 
 import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
 
 const easeOut = [0.22, 1, 0.36, 1] as const
 
-// ── Content data ──────────────────────────────────────────────
 const featuredVenturesData = {
   title: {
     prefix: "Featured ",
@@ -71,7 +69,6 @@ const featuredVenturesData = {
 
 type Venture = (typeof featuredVenturesData.items)[number]
 
-// ── Single list item (expandable) ─────────────────────────────
 function VentureItem({
   venture,
   isOpen,
@@ -96,7 +93,6 @@ function VentureItem({
         isOpen && "border-chart-3"
       )}
     >
-      {/* ── Header row (always visible) ── */}
       <button
         type="button"
         onClick={isExpandable ? onToggle : undefined}
@@ -125,7 +121,6 @@ function VentureItem({
         </motion.span>
       </button>
 
-      {/* ── Expandable body ── */}
       <AnimatePresence initial={false}>
         {isExpandable && isOpen && (
           <motion.div
@@ -137,7 +132,6 @@ function VentureItem({
             className="overflow-hidden"
           >
             <div className="grid grid-cols-1 gap-6 px-5 pb-6 sm:px-8 sm:pb-8 md:grid-cols-2 md:gap-8 lg:gap-12 lg:px-10 lg:pb-10">
-              {/* Left: description + bullets + CTA */}
               <div>
                 <p className="text-sm leading-relaxed text-foreground sm:text-base lg:text-lg xl:text-xl">
                   {venture.description}
@@ -168,7 +162,6 @@ function VentureItem({
                 </Link>
               </div>
 
-              {/* Right: image */}
               {venture.image && (
                 <div className="relative overflow-hidden rounded-2xl">
                   <div className="relative aspect-4/3 w-full lg:aspect-3/2">
@@ -190,10 +183,8 @@ function VentureItem({
   )
 }
 
-// ── Component ─────────────────────────────────────────────────
 export function FeaturedVentures() {
   const { title, items } = featuredVenturesData
-  // Default open item — index of the one with a description (03)
   const defaultOpen = items.findIndex((i) => i.description)
   const [openIndex, setOpenIndex] = React.useState<number | null>(
     defaultOpen >= 0 ? defaultOpen : null
@@ -207,7 +198,6 @@ export function FeaturedVentures() {
       className="relative w-full bg-chart-1/10 py-16 md:py-20 lg:py-24"
     >
       <div className="container mx-auto rounded-2xl p-4 sm:p-6 lg:p-8 lg:py-8">
-        {/* Heading */}
         <motion.h2
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -219,7 +209,6 @@ export function FeaturedVentures() {
           <span className="text-chart-3">{title.highlight}</span>
         </motion.h2>
 
-        {/* Items list */}
         <div className="mx-auto mt-10 flex flex-col gap-4 sm:mt-12 sm:gap-5 lg:mt-14 lg:gap-6">
           {items.map((venture, i) => (
             <VentureItem

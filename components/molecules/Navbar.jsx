@@ -25,21 +25,17 @@ const navLinks = [
   { label: "Story", id: "story" },
   { label: "Ventures", id: "ventures" },
   { label: "Impact", id: "impact" },
-  { label: "Insights", id: "insights" },
   { label: "Media", id: "media" },
+  { label: "Insights", id: "insights" },
 ]
 
 export function Navbar() {
   const [open, setOpen] = React.useState(false)
   const [activeId, setActiveId] = React.useState("home")
   const lenis = useLenis()
-
-  // ── Smooth scroll to a section ──────────────────────────────
   const scrollToSection = (id) => {
     const el = document.getElementById(id)
     if (!el) return
-
-    // Prefer Lenis's scrollTo for buttery motion; fall back to native
     if (lenis) {
       lenis.scrollTo(el, { offset: -80, duration: 1.2 })
     } else {
@@ -47,7 +43,6 @@ export function Navbar() {
     }
   }
 
-  // ── Track the active section on scroll ──────────────────────
   React.useEffect(() => {
     const sections = navLinks
       .map((l) => document.getElementById(l.id))
@@ -57,7 +52,6 @@ export function Navbar() {
 
     const observer = new IntersectionObserver(
       (entries) => {
-        // Pick the entry closest to the top of the viewport
         const visible = entries
           .filter((e) => e.isIntersecting)
           .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)
@@ -67,7 +61,7 @@ export function Navbar() {
         }
       },
       {
-        rootMargin: "-45% 0px -45% 0px", // triggers when section crosses middle of viewport
+        rootMargin: "-45% 0px -45% 0px", 
         threshold: 0,
       }
     )
